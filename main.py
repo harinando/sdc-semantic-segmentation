@@ -13,7 +13,7 @@ print('TensorFlow Version: {}'.format(tf.__version__))
 
 KEEP_PROB = 0.5
 LEARNING_RATE = 0.001
-EPOCHS = 50
+EPOCHS = 25
 BATCH_SIZE = 5
 
 # Check for a GPU
@@ -58,26 +58,26 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     :return: The Tensor for the last layer of output
     """
     # 1x1 convolution of vgg layer 7
-    layer7_out = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, strides=(1, 1), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    layer7_out = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, strides=(1, 1), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3), kernel_initializer=tf.truncated_normal_initializer(stddev=0.01))
 
     # upsample
-    layer7_out = tf.layers.conv2d_transpose(layer7_out, num_classes, 4, strides=(2, 2), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    layer7_out = tf.layers.conv2d_transpose(layer7_out, num_classes, 4, strides=(2, 2), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3), kernel_initializer=tf.truncated_normal_initializer(stddev=0.01))
 
     # 1x1 convolution of vgg layer 4
-    layer4_out = tf.layers.conv2d(vgg_layer4_out, num_classes, 1, strides=(1, 1), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    layer4_out = tf.layers.conv2d(vgg_layer4_out, num_classes, 1, strides=(1, 1), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3), kernel_initializer=tf.truncated_normal_initializer(stddev=0.01))
 
     # skip connection (element-wise addition)
     layer4_out = tf.add(layer7_out, layer4_out)
 
     # upsample
-    layer4_out = tf.layers.conv2d_transpose(layer4_out, num_classes, 4, strides=(2, 2), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    layer4_out = tf.layers.conv2d_transpose(layer4_out, num_classes, 4, strides=(2, 2), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3), kernel_initializer=tf.truncated_normal_initializer(stddev=0.01))
 
     # 1x1 convolution of vgg layer 3
-    layer3_out = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, strides=(1, 1), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    layer3_out = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, strides=(1, 1), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3), kernel_initializer=tf.truncated_normal_initializer(stddev=0.01))
 
     # skip connection (element-wise addition)
     layer3_out = tf.add(layer4_out, layer3_out)
-    return tf.layers.conv2d_transpose(layer3_out, num_classes, 16,  strides=(8, 8), padding='same', kernel_regularizer= tf.contrib.layers.l2_regularizer(1e-3))
+    return tf.layers.conv2d_transpose(layer3_out, num_classes, 16,  strides=(8, 8), padding='same', kernel_regularizer= tf.contrib.layers.l2_regularizer(1e-3), kernel_initializer=tf.truncated_normal_initializer(stddev=0.01))
 tests.test_layers(layers)
 
 
